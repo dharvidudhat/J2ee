@@ -18,7 +18,24 @@ public class ColorServlet extends HttpServlet {
 
         PrintWriter out = response.getWriter();
 
+        // Get selected color
         String color = request.getParameter("color");
+
+        // Check existing cookie
+        Cookie[] cookies = request.getCookies();
+
+        boolean visited = false;
+
+        if (cookies != null) {
+
+            for (Cookie c : cookies) {
+
+                if (c.getName().equals("bgcolor")) {
+                    visited = true;
+                    break;
+                }
+            }
+        }
 
         // Create cookie
         Cookie c = new Cookie("bgcolor", color);
@@ -29,7 +46,7 @@ public class ColorServlet extends HttpServlet {
         // Add cookie to response
         response.addCookie(c);
 
-        // Display selected color
+        // Response page
         out.println("<html>");
         out.println("<head>");
         out.println("<title>Background Color</title>");
@@ -37,8 +54,17 @@ public class ColorServlet extends HttpServlet {
 
         out.println("<body style='background-color:" + color + "'>");
 
-        out.println("<h1>Background Color Applied</h1>");
-        out.println("<h2>Selected Color: " + color + "</h2>");
+        // Welcome message
+        if (visited) {
+            out.println("<h1>Welcome back!</h1>");
+        } else {
+            out.println("<h1>Welcome!</h1>");
+        }
+
+        out.println("<h2>Background Color: " + color + "</h2>");
+
+        out.println("<br>");
+        out.println("<a href='index.html'>Select Another Color</a>");
 
         out.println("</body>");
         out.println("</html>");
@@ -58,5 +84,10 @@ public class ColorServlet extends HttpServlet {
             throws ServletException, IOException {
 
         processRequest(request, response);
+    }
+
+    @Override
+    public String getServletInfo() {
+        return "Background color using Cookie";
     }
 }
